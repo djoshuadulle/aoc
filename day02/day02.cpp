@@ -10,7 +10,8 @@ inline int mult(int val1, int val2);
 void intcode_it(std::vector<int> *vec, int *val_zero_idx) {
     std::vector<int> input = *vec;
 
-    for (std::vector<int>::iterator it = input.begin(); it != input.end(); it++) {
+    for (std::vector<int>::iterator it = input.begin();
+        it != input.end(); it++) {
         int opcode = *it;
 
         if (opcode == 99) {
@@ -43,7 +44,7 @@ void intcode_it(std::vector<int> *vec, int *val_zero_idx) {
 void intcode_i(std::vector<int> *vec, int *output) {
     std::vector<int> input = *vec;
 
-    for (int ip = 0; ip < input.size(); ip+=4) {
+    for (unsigned ip = 0; ip < input.size(); ip += 4) {
         int opcode = input[ip];
 
         if (opcode == 99) {
@@ -74,7 +75,6 @@ void intcode_i(std::vector<int> *vec, int *output) {
 void output_finder(std::vector<int> *vec,
                    std::pair<int, int> *result,
                    bool *success) {
-
     const int kGoalResult = 19690720;
 
     // I was worried nested for loops would be O(n^2) which sucks,
@@ -82,21 +82,20 @@ void output_finder(std::vector<int> *vec,
     //  but this code runs extremely quickly
     for (int noun = 0; noun <= 99 ; noun++) {
         for (int verb = 0; verb <= 99 ; verb++) {
-        std::vector<int> tmpInput(*vec);
-        tmpInput[1] = noun;
-        tmpInput[2] = verb;
+            std::vector<int> tmpInput(*vec);
+            tmpInput[1] = noun;
+            tmpInput[2] = verb;
 
-        int program_output;
-        intcode_i(&tmpInput, &program_output);
+            int program_output;
+            intcode_i(&tmpInput, &program_output);
 
-        if (program_output == kGoalResult) {
-            *result = std::make_pair(noun, verb);
-            *success = true;
-            return;
-        } else {
-            tmpInput.clear();
-        }
-
+            if (program_output == kGoalResult) {
+                *result = std::make_pair(noun, verb);
+                *success = true;
+                return;
+            } else {
+                tmpInput.clear();
+            }
         }
     }
 }
