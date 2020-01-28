@@ -6,6 +6,7 @@ inline int add(int val1, int val2);
 inline int mult(int val1, int val2);
 
 
+// this function seemed broken, but works. maybe i don't understand gdb.
 void intcode_it(std::vector<int> *vec, int *val_zero_idx) {
     std::vector<int> input = *vec;
 
@@ -20,7 +21,6 @@ void intcode_it(std::vector<int> *vec, int *val_zero_idx) {
         // as a way of checking that I don't throw an index out of bounds error
         // or another type of error,
         // but maybe not needed since I know data is always good
-        //
 
         int val1_addr = *(++it);
         int val2_addr = *(++it);
@@ -39,6 +39,7 @@ void intcode_it(std::vector<int> *vec, int *val_zero_idx) {
     }
 }
 
+// this function does same as above w/o iterators.
 void intcode_i(std::vector<int> *vec, int *output) {
     std::vector<int> input = *vec;
 
@@ -69,6 +70,37 @@ void intcode_i(std::vector<int> *vec, int *output) {
         input[result_addr] = result;
     }
 }
+
+void output_finder(std::vector<int> *vec,
+                   std::pair<int, int> *result,
+                   bool *success) {
+
+    const int kGoalResult = 19690720;
+
+    // I was worried nested for loops would be O(n^2) which sucks,
+    // and i tried researching other methods before diong this,
+    //  but this code runs extremely quickly
+    for (int noun = 0; noun <= 99 ; noun++) {
+        for (int verb = 0; verb <= 99 ; verb++) {
+        std::vector<int> tmpInput(*vec);
+        tmpInput[1] = noun;
+        tmpInput[2] = verb;
+
+        int program_output;
+        intcode_i(&tmpInput, &program_output);
+
+        if (program_output == kGoalResult) {
+            *result = std::make_pair(noun, verb);
+            *success = true;
+            return;
+        } else {
+            tmpInput.clear();
+        }
+
+        }
+    }
+}
+
 void parseFileToVec(std::string input_path,
                     std::vector<int> *vec,
                     bool *success) {
@@ -111,6 +143,7 @@ void unit_test_one() {
 
 
 void part_a_result() {
+    std::cout << "Part A" << std::endl;
     std::string input_dir = "/Users/josh/repos/aoc-2019/day02/input.txt";
 
     std::vector<int> parsed_input;
@@ -127,8 +160,41 @@ void part_a_result() {
     }
 }
 
+void part_b_result() {
+    std::cout << "Part B" << std::endl;
+    std::string input_dir = "/Users/josh/repos/aoc-2019/day02/input.txt";
+
+    std::vector<int> parsed_input;
+    bool success = false;
+    parseFileToVec(input_dir, &parsed_input, &success);
+
+    if (success) {
+        std::cout << "File parsed." << std::endl;
+        std::pair<int, int> result;
+        bool pair_found = false;
+        output_finder(&parsed_input, &result, &pair_found);
+
+        if (pair_found) {
+            int noun = result.first;
+            int verb = result.second;
+            int aoc_soln = 100 * noun + verb;
+            std::cout << "The noun is: " << noun << std::endl;
+            std::cout << "The verb is: " << verb << std::endl;
+            std::cout << "The final solution is: " << aoc_soln << std::endl;
+        } else {
+            std::cout << "No result pair found." <<std::endl;
+        }
+
+    } else {
+        std::cout << "Error parsing file." <<std::endl;
+    }
+
+
+}
+
 int main(int argc, char* argv[]) {
     std::cout << "Running..." << std::endl;
     unit_test_one();
     part_a_result();
+    part_b_result();
 }
