@@ -1,12 +1,13 @@
+
+#include <assert.h>
+#include <climits>
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <string>
-#include <assert.h>
 #include <map>
 #include <set>
+#include <string>
 #include <vector>
-#include <climits>
 
 const std::pair<int, int> CENTRAL_PORT(0, 0);
 
@@ -22,7 +23,7 @@ std::pair<int, int> get_last_step(const std::set<std::pair<int, int>>& segment,
 
     if (positive_move) {
     // Because sets order from smallest to biggest, e.g. -10, ..., 0, ..., 10
-    // positive moves from (0, 0) result in the last element being the end point
+    // positive moves from (0, 0) result in last element being the end point
         std::set<std::pair<int, int>>::reverse_iterator end_pt;
         end_pt = segment.rbegin();
         last_point = *end_pt;
@@ -30,7 +31,7 @@ std::pair<int, int> get_last_step(const std::set<std::pair<int, int>>& segment,
 
     if (negative_move) {
     // Because sets order from smallest to biggest, e.g. -10, ..., 0, ..., 10
-    // negative moves from (0, 0) result in the first element being the end point
+    // negative moves from (0, 0) result in first element being the end point
         std::set<std::pair<int, int>>::iterator beg_pt;
         beg_pt = segment.begin();
         last_point = *beg_pt;
@@ -70,7 +71,8 @@ std::pair<int, int> down(const std::pair<int, int>& curr_point) {
     return next_point;
 }
 
-int get_manhattan_distance(const std::pair<int, int>& pointA, const std::pair<int, int>& pointB) {
+int get_manhattan_distance(const std::pair<int, int>& pointA,
+                           const std::pair<int, int>& pointB) {
     int x_distance = abs(pointB.first - pointA.first);
     int y_distance = abs(pointB.second - pointA.second);
     int manhattanDistance = x_distance + y_distance;
@@ -80,9 +82,8 @@ int get_manhattan_distance(const std::pair<int, int>& pointA, const std::pair<in
 
 // Q: Is there a convention for chars as 'n' vs "n"?
 std::set<std::pair<int, int>> map_wire_segment(const std::pair<int, int>& start_point,
-                                                const char& direction,
-                                                const int& steps) {
-
+                                               const char& direction,
+                                               const int& steps) {
     std::pair<int, int> curr_point = start_point;
     std::pair<int, int> next_point;
 
@@ -108,6 +109,8 @@ std::set<std::pair<int, int>> map_wire_segment(const std::pair<int, int>& start_
 }
 
 // Q: I was getting some weirdness w/ the iterator when the input was a const.
+//error: passing ‘const iterator {aka const __gnu_cxx::__normal_iterator<std::pair<char, int>*,
+//std::vector<std::pair<char, int> > >}’ as ‘this’ argument discards qualifiers [-fpermissive]
 std::set<std::pair<int, int>> map_wire_path(std::vector<std::pair<char, int>>& wire_path) {
     std::set<std::pair<int, int>> full_path;
 
@@ -117,7 +120,6 @@ std::set<std::pair<int, int>> map_wire_path(std::vector<std::pair<char, int>>& w
 
     std::vector<std::pair<char, int>>::iterator it;
     for (it = wire_path.begin(); it != wire_path.end(); it++) {
-
         direction = it->first;
         steps = it->second;
 
@@ -130,9 +132,13 @@ std::set<std::pair<int, int>> map_wire_path(std::vector<std::pair<char, int>>& w
     return full_path;
 }
 
+// Q: If const'ing above, that error trickles down to here when these are
+// passed as const.
+// error: binding reference of type ‘std::vector<std::pair<char, int> >&’ to
+// ‘const std::vector<std::pair<char, int> >’ discards qualifiers
+//     full_path_A = map_wire_path(wire_path_A);
 int find_closest_intersection(std::vector<std::pair<char, int>>& wire_path_A,
                               std::vector<std::pair<char, int>>& wire_path_B) {
-
     std::set<std::pair<int, int>> full_path_A;
     full_path_A = map_wire_path(wire_path_A);
 
@@ -140,7 +146,7 @@ int find_closest_intersection(std::vector<std::pair<char, int>>& wire_path_A,
     full_path_B = map_wire_path(wire_path_B);
 
     int manhattanDistance = INT_MAX;
-    for (auto const &pt: full_path_A) {
+    for (auto const &pt : full_path_A) {
         int distance = INT_MAX;
 
         // Seaches path B for points in path A
@@ -159,7 +165,6 @@ int find_closest_intersection(std::vector<std::pair<char, int>>& wire_path_A,
 }
 
 // UNIT TESTS
-
 int testDirections() {
     std::pair<int, int> curr_point;
     curr_point.first = 0;
@@ -219,8 +224,8 @@ int testManhattanDistance() {
     pointA.first = 9;     // x1
     pointA.second = -11;  // y1
 
-    pointB.first = 3;    // x2
-    pointB.second = -11; // y2
+    pointB.first = 3;     // x2
+    pointB.second = -11;  // y2
 
     int quadrantFourDistance = get_manhattan_distance(pointA, pointB);
     assert(quadrantFourDistance == 6);
@@ -374,7 +379,7 @@ void testMapWirePath() {
     std::set<std::pair<int, int>> full_path;
     full_path = map_wire_path(wire_path);
 
-    for (auto const &pt: full_path) {
+    for (auto const &pt : full_path) {
         printf("x: %d, y: %d\n", pt.first, pt.second);
     }
 }
