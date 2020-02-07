@@ -1,3 +1,6 @@
+
+#include "day03.cpp"
+
 // TEST INPUT
 const std::vector<std::pair<char, int>> get_wire_path_A() {
     // R75,D30,R83,U83,L12,D49,R71,U7,L72
@@ -125,8 +128,8 @@ int testManhattanDistance() {
     pointA.first = 9;     // x1
     pointA.second = -11;  // y1
 
-    pointB.first = 3;    // x2
-    pointB.second = -11; // y2
+    pointB.first = 3;     // x2
+    pointB.second = -11;  // y2
 
     int quadrantFourDistance = get_manhattan_distance(pointA, pointB);
     assert(quadrantFourDistance == 6);
@@ -154,7 +157,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 75);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == 75);
@@ -169,7 +172,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 83);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == 0);
@@ -184,7 +187,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 12);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == -12);
@@ -199,7 +202,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 30);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == 0);
@@ -214,7 +217,7 @@ void testMapWirePath() {
     std::set<std::pair<int, int>> full_path;
     full_path = map_wire_path(wire_path);
 
-    for (auto const &pt: full_path) {
+    for (auto const &pt : full_path) {
         printf("x: %d, y: %d\n", pt.first, pt.second);
     }
 }
