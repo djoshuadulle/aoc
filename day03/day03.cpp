@@ -14,7 +14,7 @@ const std::pair<int, int> get_start_point() {
     return CENTRAL_PORT;
 }
 
-std::pair<int, int> get_last_point(const std::set<std::pair<int, int>>& segment,
+std::pair<int, int> get_last_step(const std::set<std::pair<int, int>>& segment,
                                    const char& direction) {
     bool positive_move = (direction == 'R' || direction == 'U');
     bool negative_move = (direction == 'L' || direction == 'D');
@@ -124,7 +124,7 @@ std::set<std::pair<int, int>> map_wire_path(std::vector<std::pair<char, int>>& w
         std::set<std::pair<int, int>> segment;
         segment = map_wire_segment(curr_point, direction, steps);
 
-        curr_point = get_last_point(segment, direction);
+        curr_point = get_last_step(segment, direction);
         full_path.insert(segment.begin(), segment.end());
     }
     return full_path;
@@ -248,7 +248,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 75);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == 75);
@@ -263,7 +263,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 83);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == 0);
@@ -278,7 +278,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 12);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == -12);
@@ -293,7 +293,7 @@ int testMapWireSegment() {
     segment_length = segment.size();
     assert(segment_length == 30);
 
-    last_point = get_last_point(segment, direction);
+    last_point = get_last_step(segment, direction);
     last_x = last_point.first;
     last_y = last_point.second;
     assert(last_x == 0);
