@@ -1,13 +1,10 @@
 
 #include <assert.h>
 #include <climits>
-#include <cmath>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <set>
 #include <sstream>
-#include <string.h>
 #include <string>
 #include <vector>
 
@@ -180,11 +177,14 @@ std::pair<char, int> split_data(std::string data) {
 }
 
 // I was strugling with a clean way to get the data from block, to list of
-// comma seperate values. This solution seems hardcoded, but I got tired of
-// messing with it.
+// comma seperate values, to my expected data type.
+// This solution seems hardcoded, but I got tired of messing with it.
 void get_wire_paths(std::vector<std::string> parsed_data,
-                    std::vector<std::pair<char, int>>* path_one,
-                    std::vector<std::pair<char, int>>* path_two) {
+                    std::vector<std::pair<char, int>>& wire_path_one,
+                    std::vector<std::pair<char, int>>& wire_path_two,
+                    bool& success) {
+
+    success = false;
     std::istringstream str_strm_one(parsed_data[0]);
     std::vector<std::pair<char, int>> local_data;
     std::string data;
@@ -193,7 +193,7 @@ void get_wire_paths(std::vector<std::string> parsed_data,
         std::pair<char, int> instruction = split_data(data);
         local_data.push_back(instruction);
     }
-    *path_one = std::move(local_data);
+    wire_path_one = std::move(local_data);
 
     std::istringstream str_strm_two(parsed_data[1]);
     local_data.clear();
@@ -202,13 +202,14 @@ void get_wire_paths(std::vector<std::string> parsed_data,
         std::pair<char, int> instruction = split_data(data);
         local_data.push_back(instruction);
     }
-    *path_two = std::move(local_data);
+    wire_path_two = std::move(local_data);
+    success = true;
 }
 
 void parse_input_text(std::string input_path,
                       std::vector<std::string>* parsed_data,
-                      bool* success) {
-    *success = false;
+                      bool& success) {
+    success = false;
     std::ifstream input_file;
     input_file.open(input_path);
 
@@ -220,55 +221,40 @@ void parse_input_text(std::string input_path,
             local_data.push_back(data);
         }
         *parsed_data = std::move(local_data);
-        *success = true;
+        success = true;
     }
 }
 
-// UNIT TESTS
-void testParseInputText() {
+// SOLUTIONS
+void solve_part_A() {
     std::string input_dir = "/Users/josh/repos/aoc-2019/day03/input.txt";  // personal mac
 
     std::vector<std::string> parsed_data;
     bool success = false;
-    parse_input_text(input_dir, &parsed_data, &success);
+    parse_input_text(input_dir, &parsed_data, success);
 
     if (!success) {
-        std::cout << "Error parsing file." <<std::endl;
+        printf("Error parsing file.\n");
         return;
     }
-    std::cout << "File parsed." << std::endl;
+    printf("File parsed.\n");
 
-    for (auto const &data : parsed_data) {
-        std::cout << data << std::endl;
+    std::vector<std::pair<char, int>> wire_path_one;
+    std::vector<std::pair<char, int>> wire_path_two;
+    success = false;
+    get_wire_paths(parsed_data, wire_path_one, wire_path_two, success);
+
+    if (!success) {
+        printf("Error getting wire paths.\n");
+        return;
     }
-}
+    printf("Wire paths obtained.\n");
 
-int testSplitData() {
-    std::string data = "R23";
-
-    std::pair<char, int> instruction = split_data(data);
-    char direction = instruction.first;
-    int steps = instruction.second;
-    assert(direction == 'R');
-    assert(steps == 23);
-
-    return 0;
-}
-
-void printResults(const int& result) {
-    if (result == 0) {
-        printf("Success!\n");
-    } else {
-        printf("Fail!\n");
-    }
+    int min_intersection;
+    min_intersection = find_closest_intersection(wire_path_one, wire_path_two);
+    printf("Part A Solution: %d\n", min_intersection);
 }
 
 int main(int argc, char* argv[]) {
-    // printResults(testManhattanDistance());
-    // printResults(testDirections());
-    // printResults(testMapWireSegment());
-    // printResults(testFindClosestIntersection());
-    // printResults(testSplitData());
-    // testMapWirePath();
-    testParseInputText();
+    solve_part_A();
 }

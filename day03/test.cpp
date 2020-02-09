@@ -239,6 +239,35 @@ int testFindClosestIntersection() {
     return 0;
 }
 
+int testSplitData() {
+    std::string data = "R23";
+
+    std::pair<char, int> instruction = split_data(data);
+    char direction = instruction.first;
+    int steps = instruction.second;
+    assert(direction == 'R');
+    assert(steps == 23);
+
+    return 0;
+}
+
+void testParseInputText() {
+    std::string input_dir = "/Users/josh/repos/aoc-2019/day03/input.txt";  // personal mac
+
+    std::vector<std::string> parsed_data;
+    bool success = false;
+    parse_input_text(input_dir, &parsed_data, success);
+
+    if (!success) {
+        std::cout << "Error parsing file." <<std::endl;
+        return;
+    }
+    std::cout << "File parsed." << std::endl;
+
+    for (auto const &data : parsed_data) {
+        std::cout << data << std::endl;
+    }
+}
 
 void printResults(const int& result) {
     if (result == 0) {
@@ -254,4 +283,6 @@ int main(int argc, char* argv[]) {
     printResults(testMapWireSegment());
     printResults(testFindClosestIntersection());
     // testMapWirePath();
+    printResults(testSplitData());
+    testParseInputText();
 }
