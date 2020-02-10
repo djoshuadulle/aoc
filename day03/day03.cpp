@@ -164,6 +164,89 @@ int find_closest_intersection(std::vector<std::pair<char, int>>& wire_path_A,
     return manhattanDistance;
 }
 
+std::vector<std::pair<int, int>> find_intersections(
+                            std::vector<std::pair<char, int>>& wire_path_A,
+                            std::vector<std::pair<char, int>>& wire_path_B) {
+    std::set<std::pair<int, int>> full_path_A;
+    full_path_A = map_wire_path(wire_path_A);
+
+    std::set<std::pair<int, int>> full_path_B;
+    full_path_B = map_wire_path(wire_path_B);
+
+    std::vector<std::pair<int, int>> intersection_list;
+    for (auto const &pt : full_path_A) {
+        // Seaches path B for points in path A
+        auto intrsct_ptr = full_path_B.find(pt);
+        bool intersection_found = (intrsct_ptr != full_path_B.end());
+        if (intersection_found) {
+            intersection_list.push_back(*intrsct_ptr);
+        }
+    }
+    return intersection_list;
+}
+
+int calculate_total_steps(std::pair<int, int>& intersection,
+                          std::vector<std::pair<char, int>>& wire_path) {
+
+    int total_steps = 0;
+
+    std::pair<int, int> curr_point = get_start_point();
+    char direction;
+    int steps;
+
+    std::vector<std::pair<char, int>>::iterator it;
+    for (it = wire_path.begin(); it != wire_path.end(); it++) {
+        direction = it->first;
+        steps = it->second;
+
+        // std::set<std::pair<int, int>> segment;
+        // segment = map_wire_segment(curr_point, direction, steps);
+
+        std::pair<int, int> next_point;
+
+        for (int i = 0; i < steps; i++) {
+            if (direction == 'R') {
+                next_point = right(curr_point);
+            }
+            if (direction == 'L') {
+                next_point = left(curr_point);
+            }
+            if (direction == 'U') {
+                next_point = up(curr_point);
+            }
+            if (direction == 'D') {
+                next_point = down(curr_point);
+            }
+            curr_point = next_point;
+            total_steps += 1;
+
+            if (curr_point == intersection) {
+                return total_steps;
+            }
+        }
+    }
+    return 0;
+}
+
+int find_minimum_steps(std::vector<std::pair<int, int>> intersection_list,
+                       std::vector<std::pair<char, int>> wire_path_one,
+                       std::vector<std::pair<char, int>> wire_path_two) {
+    int min_steps = INT_MAX;
+
+    for (auto &intersection : intersection_list) {
+        int path_dist_A = calculate_total_steps(intersection, wire_path_one);
+        int path_dist_B = calculate_total_steps(intersection, wire_path_two);
+
+        int total_steps = path_dist_A + path_dist_B;
+
+        bool shortest = (total_steps < min_steps);
+        if (shortest) {
+            min_steps = total_steps;
+        }
+    }
+    return min_steps;
+}
+
 // DATA HANDLING FUNCTIONS
 std::pair<char, int> split_data(std::string data) {
     char direction = data[0];  // Directions is always first character
@@ -255,6 +338,40 @@ void solve_part_A() {
     printf("Part A Solution: %d\n", min_intersection);
 }
 
+void solve_part_B() {
+    std::string input_dir = "/Users/josh/repos/aoc-2019/day03/input.txt";  // personal mac
+
+    std::vector<std::string> parsed_data;
+    bool success = false;
+    parse_input_text(input_dir, &parsed_data, success);
+
+    if (!success) {
+        printf("Error parsing file.\n");
+        return;
+    }
+    printf("File parsed.\n");
+
+    std::vector<std::pair<char, int>> wire_path_one;
+    std::vector<std::pair<char, int>> wire_path_two;
+    success = false;
+    get_wire_paths(parsed_data, wire_path_one, wire_path_two, success);
+
+    if (!success) {
+        printf("Error getting wire paths.\n");
+        return;
+    }
+    printf("Wire paths obtained.\n");
+
+    std::vector<std::pair<int, int>> intersection_list =
+                            find_intersections(wire_path_one, wire_path_two);
+
+    int min_steps = find_minimum_steps(intersection_list,
+                                       wire_path_one,
+                                       wire_path_two);
+    printf("Part B Solution: %d\n", min_steps);
+}
+
 int main(int argc, char* argv[]) {
     solve_part_A();
+    solve_part_B();
 }
