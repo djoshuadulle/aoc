@@ -199,9 +199,6 @@ int calculate_total_steps(std::pair<int, int>& intersection,
         direction = it->first;
         steps = it->second;
 
-        // std::set<std::pair<int, int>> segment;
-        // segment = map_wire_segment(curr_point, direction, steps);
-
         std::pair<int, int> next_point;
 
         for (int i = 0; i < steps; i++) {
