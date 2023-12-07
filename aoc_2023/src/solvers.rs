@@ -11,11 +11,10 @@ impl FromStr for PuzzlePart {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Parse the string and construct a PuzzlePart instance
-        // Adjust the parsing logic based on your enum variants
         match s {
             "P1" => Ok(PuzzlePart::P1),
             "P2" => Ok(PuzzlePart::P2), // Example with a field
-            _ => Err("Failed to parse PuzzlePart"),
+            _ => Err("Failed to parse PuzzlePart entry."),
         }
     }
 }

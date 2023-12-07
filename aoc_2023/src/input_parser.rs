@@ -17,6 +17,5 @@ pub fn parse_input_file(file_path: String) -> Result<Vec<String>, Box<dyn Error>
     for line in file_iter {
         input_vec.push(line.expect("Error parsing input file line."));
     }
-
     Ok(input_vec)
 }

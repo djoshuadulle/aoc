@@ -27,7 +27,7 @@ impl Config {
 
         let puzzle_part = match args.next() {
             Some(arg) => arg.parse::<solvers::PuzzlePart>().unwrap(),
-            None => return Err("Specify which part to solve, P1 or P2"),
+            None => return Err("Specify which part to solve, P1 or P2."),
         };
 
         Ok(Config {
@@ -48,18 +48,18 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let solution = match config.date {
         1 => solvers::day01_solver(&input_vec, config.puzzle_part),
-        // 2 => solvers::day02_solver(&input_vec);
-        // 3 => solvers::day03_solver(&input_vec);
-        // 4 => solvers::day04_solver(&input_vec);
-        // 5 => solvers::day05_solver(&input_vec);
+        // 2 => solvers::day02_solver(&input_vec, config.puzzle_part),
+        // 3 => solvers::day03_solver(&input_vec, config.puzzle_part),
+        // 4 => solvers::day04_solver(&input_vec, config.puzzle_part),
+        // 5 => solvers::day05_solver(&input_vec, config.puzzle_part),
         _ => panic!("No solver for specified date."),
     };
 
     match solution {
         Ok(sol) => {
             println!("The final solution is: {sol}.");
-            Ok(())
         }
-        Err(e) => panic!("No solution found: {e}"),
+        Err(err) => panic!("No solution found: {err}"),
     }
+    Ok(())
 }
